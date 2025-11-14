@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Результаты - {{ quiz.title }}</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .passed { color: #27ae60; }
+        .failed { color: #e74c3c; }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .answers-list {
+            margin: 2rem 0;
+        }
+        .answer-item {
+            padding: 1rem;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: #fafbfc;
+        }
+        .answer-correct {
+            border-left: 4px solid #27ae60;
+            background: #f0fff4;
+        }
+        .answer-incorrect {
+            border-left: 4px solid #e74c3c;
+            background: #fff5f5;
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .user-answer {
+            color: #2c3e50;
+        }
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .status-correct {
+            background: #27ae60;
+            color: white;
+        }
+        .status-incorrect {
+            background: #e74c3c;
+            color: white;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0 0.5rem;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="{% url 'quizzes:quiz_list' %}" class="back-link">← Назад к списку тестов</a>
+
+    <div class="result-header">
+        <h1>📊 Результаты теста</h1>
+        <h2>{{ quiz.title }}</h2>
+
+        <div class="score {% if percentage >= 70 %}passed{% else %}failed{% endif %}">
+            {{ percentage|floatformat:1 }}%
+        </div>
+
+        <p>
+            {% if percentage >= 70 %}
+            🎉 Отлично! Вы прошли тест!
+            {% elif percentage >= 50 %}
+            👍 Хороший результат!
+            {% else %}
+            💪 Продолжайте учиться!
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value">{{ correct_answers }}/{{ total_questions }}</div>
+            <div class="stat-label">Правильных ответов</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ percentage|floatformat:1 }}%</div>
+            <div class="stat-label">Общий результат</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ submission.created_at|date:"d.m.Y H:i" }}</div>
+            <div class="stat-label">Дата прохождения</div>
+        </div>
+    </div>
+
+    <div class="answers-list">
+        <h3>Детали ответов:</h3>
+
+        {% for answer in answers %}
+        <div class="answer-item {% if answer.choice.is_correct %}answer-correct{% else %}answer-incorrect{% endif %}">
+            <div class="question-text">
+                Вопрос {{ forloop.counter }}: {{ answer.question.text }}
+                <span class="status {% if answer.choice.is_correct %}status-correct{% else %}status-incorrect{% endif %}">
+                            {% if answer.choice.is_correct %}✓ Правильно{% else %}✗ Неправильно{% endif %}
+                        </span>
+            </div>
+
+            <div class="user-answer">
+                <strong>Ваш ответ:</strong> {{ answer.choice.text }}
+            </div>
+
+            {% if not answer.choice.is_correct %}
+            <div class="correct-answer">
+                <strong>Правильный ответ:</strong>
+                {% for choice in answer.question.choices.all %}
+                {% if choice.is_correct %}
+                {{ choice.text }}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'quizzes:quiz_detail' quiz.id %}" class="btn btn-primary">
+            🔄 Пройти тест снова
+        </a>
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-secondary">
+            📚 К списку тестов
+        </a>
+    </div>
+</div>
+</body>
+</html>

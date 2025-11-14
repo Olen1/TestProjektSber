@@ -1,9 +1,7 @@
 from __future__ import annotations
-
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
-
 from .models import Quiz, Question, Choice, Submission, Answer
 
 
@@ -36,11 +34,35 @@ def quiz_submit(request: HttpRequest, pk: int) -> HttpResponse:
         Answer.objects.create(submission=submission, question=question, choice=choice)
 
     from .tasks import grade_submission
-
     grade_submission.send(submission.id)
 
-    return HttpResponseRedirect(reverse("quizzes:quiz_detail", args=[pk]))
+
+    return HttpResponseRedirect(reverse("quizzes:quiz_results", args=[submission.id]))
 
 
+def quiz_results(request: HttpRequest, submission_id: int) -> HttpResponse:
+    submission = get_object_or_404(
+        Submission.objects.select_related('quiz'),
+        id=submission_id
+    )
 
 
+    answers = submission.answers.select_related('question', 'choice').all()
+
+    correct_answers = sum(1 for answer in answers if answer.choice.is_correct)
+    total_questions = submission.quiz.questions.count()
+
+    if submission.score is None:
+        submission.score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+        submission.save()
+
+    context = {
+        'submission': submission,
+        'quiz': submission.quiz,
+        'answers': answers,
+        'correct_answers': correct_answers,
+        'total_questions': total_questions,
+        'percentage': submission.score,
+    }
+
+    return render(request, "quizzes/quiz_results.html", context)

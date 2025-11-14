@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/projekt_python/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.13 (TestProjektSber)" jdkType="Python SDK" />
