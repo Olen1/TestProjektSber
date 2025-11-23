@@ -41,6 +41,6 @@ python manage.py runserver
 python -m dramatiq knowledge_platform --processes 1 --threads 4
 ```
 
-Откройте `http://127.0.0.1:8000/` — список тестов. 
+Откройте `http://127.0.0.1:8000/login/` — список тестов. 
 Админка: `http://127.0.0.1:8000/admin/`.
 

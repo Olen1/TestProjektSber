@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Вход — Knowledge Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+        }
+        .login-card h2 {
+            margin: 0 0 1.5rem;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.75rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        .register-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.25rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-link:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <h2>🔐 Вход в систему</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <div class="error">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Пароль</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <div class="error">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="error" style="text-align: center; margin-bottom: 1rem;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="submit-btn">Войти</button>
+    </form>
+
+    <a href="{% url 'register' %}" class="register-link">Нет аккаунта? Зарегистрироваться</a>
+</div>
+</body>
+</html>

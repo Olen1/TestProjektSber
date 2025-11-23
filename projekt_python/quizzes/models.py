@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.contrib.auth.models import User
+
 
 class Quiz(models.Model):
     title = models.CharField(max_length=200)
@@ -28,9 +30,10 @@ class Choice(models.Model):
 
 
 class Submission(models.Model):
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="submissions")
-    created_at = models.DateTimeField(auto_now_add=True)
-    score = models.IntegerField(null=True, blank=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    score = models.FloatField(default=0.0)
 
     def __str__(self) -> str:
         return f"Submission #{self.id} for {self.quiz}"

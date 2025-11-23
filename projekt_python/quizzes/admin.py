@@ -28,10 +28,11 @@ class QuestionAdmin(admin.ModelAdmin):
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ("question", "text", "is_correct")
 
-
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ("quiz", "created_at", "score")
+    list_display = ['id', 'submitted_at', 'user', 'quiz', 'score']
+    list_filter = ['submitted_at', 'quiz', 'user']
+    readonly_fields = ['submitted_at']
 
 
 @admin.register(Answer)

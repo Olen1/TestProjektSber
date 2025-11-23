@@ -51,6 +51,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "knowledge_platform.wsgi.application"
 
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'quizzes:quiz_list'
+LOGOUT_REDIRECT_URL = 'login'
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

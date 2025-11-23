@@ -1,0 +1,18 @@
+<h2>Моя статистика</h2>
+<p>Всего пройдено тестов: {{ total_submissions }}</p>
+<p>Средний балл: {{ avg_score }}%</p>
+
+<h3>По каждому тесту:</h3>
+<ul>
+    {% for quiz, stats in quiz_stats.items %}
+    {% if stats.attempts > 0 %}
+    <li>
+        <strong>{{ quiz.title }}</strong>:
+        попыток — {{ stats.attempts }},
+        средний балл — {{ stats.avg_score|floatformat:2 }}%
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<a href="{% url 'quizzes:quiz_list' %}">← Назад к тестам</a>
